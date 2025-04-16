@@ -17,13 +17,11 @@
 🔍 Arama ve filtreleme özellikleri
 
 🖼️ Görsel yükleme desteği
-
-🔗 Blog paylaşım (Twitter, Facebook, WhatsApp)
-
 📄 Detay sayfasında kullanıcı adı gösterimi (admin için e-mail gösterimi test amaçlıdır)
 
 ![image](https://github.com/user-attachments/assets/b7a3fd8f-e36a-4977-8369-3e17cb64b9cf)
 
+🔗 Blog paylaşım (Twitter, Facebook, WhatsApp)
 ![image](https://github.com/user-attachments/assets/41b0abba-d0ed-4a5f-9200-fa94f78b65df)
 
 
@@ -70,7 +68,11 @@ Google Gemini API ile yazı önerileri alarak içerik üretimini destekleyen ak�
 💎 Bootstrap & Font Awesome entegrasyonu
 🌙 Dark mode desteği ile kullanıcı dostu deneyim
 
+LIGHT MODE
+
 ![image](https://github.com/user-attachments/assets/e06d9423-fa3e-4ced-ad9c-94e5fbb4d849)
+
+DARK MODE
 
 ![image](https://github.com/user-attachments/assets/93a15e6b-0c0e-4f58-9136-762f9abec60a)
 
