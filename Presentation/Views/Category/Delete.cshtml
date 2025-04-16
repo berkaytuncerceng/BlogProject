@@ -1,0 +1,17 @@
+﻿@model Application.Dtos.CategoryDeleteDto
+
+@{
+    ViewData["Title"] = "Kategori Sil";
+}
+
+<h2>Kategori Sil</h2>
+
+<div class="alert alert-danger">
+    <p><strong>@Model.Name</strong> adlı kategoriyi silmek istediğinize emin misiniz?</p>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Sil</button>
+    <a href="@Url.Action("Index", "Category")" class="btn btn-secondary">İptal</a>
+</form>

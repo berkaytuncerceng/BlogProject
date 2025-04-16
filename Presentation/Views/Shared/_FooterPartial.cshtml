@@ -1,0 +1,52 @@
+﻿<div class="container">
+    <div class="row align-items-center">
+        <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+            <h5 class="mb-0">
+                <i class="bi bi-journal-text me-2"></i>BlogWeb
+            </h5>
+            <p class="small mt-2 mb-0 text-muted">Modern blog platformu</p>
+        </div>
+        <div class="col-md-4 text-center mb-3 mb-md-0">
+            <p class="mb-0">&copy; @DateTime.Now.Year - BlogWeb. Tüm hakları saklıdır.</p>
+        </div>
+        <div class="col-md-4 text-center text-md-end">
+            <div class="social-links">
+                <a href="#" class="text-white me-2" title="Twitter"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="text-white me-2" title="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="text-white me-2" title="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="text-white" title="GitHub"><i class="bi bi-github"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .footer {
+        padding: 2rem 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .dark-mode .footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .social-links a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .social-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+    .text-muted {
+        color: rgba(255, 255, 255, 0.6) !important;
+    }
+</style>

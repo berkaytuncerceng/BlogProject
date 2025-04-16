@@ -1,0 +1,205 @@
+﻿@model IEnumerable<Application.Dtos.BlogListDto>
+@{
+    ViewData["Title"] = "Blog Akışı";
+    var categories = ViewBag.Categories as IEnumerable<Application.Dtos.CategoryListDto>;
+}
+<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<div class="container">
+    <div class="row">
+        <!-- Sol Sidebar -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtreler</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Index" method="get">
+                        <div class="mb-3">
+                            <label for="searchTitle" class="form-label">Başlık</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="searchTitle" name="searchTitle" class="form-control" value="@ViewData["SearchTitle"]" placeholder="Blog başlığı..." />
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">Yazar</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" id="userName" name="userName" class="form-control" value="@ViewData["UserName"]" placeholder="Yazar adı..." />
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="categoryId" class="form-label">Kategori</label>
+                            <select id="categoryId" name="categoryId" class="form-select">
+                                <option value="">-- Tüm Kategoriler --</option>
+                                @if (categories != null)
+                                {
+                                    @foreach (var category in categories)
+                                    {
+                                        <option value="@category.Id" selected="@(ViewData["CategoryId"]?.ToString() == category.Id.ToString())">@category.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Tarih Aralığı</label>
+                            <input type="date" id="startDate" name="startDate" class="form-control mb-2" value="@ViewData["StartDate"]" placeholder="Başlangıç" />
+                            <input type="date" id="endDate" name="endDate" class="form-control" value="@ViewData["EndDate"]" placeholder="Bitiş" />
+                        </div> 
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-search me-2"></i>Ara</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-undo me-2"></i>Temizle</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ana İçerik - Blog Akışı -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0"><i class="fas fa-newspaper me-2"></i>Blog Akışı</h2>
+                
+                <div>
+                    <a asp-action="Create" class="btn btn-success"><i class="fas fa-plus me-2"></i>Yeni Blog</a>
+                    <button class="btn btn-outline-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobil için filtre offcanvas -->
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="filterOffcanvasLabel">Filtreler</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <form asp-action="Index" method="get">
+                        <div class="mb-3">
+                            <label for="mobileSearchTitle" class="form-label">Başlık</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="mobileSearchTitle" name="searchTitle" class="form-control" value="@ViewData["SearchTitle"]" placeholder="Blog başlığı..." />
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="mobileUserName" class="form-label">Yazar</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" id="mobileUserName" name="userName" class="form-control" value="@ViewData["UserName"]" placeholder="Yazar adı..." />
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="mobileCategoryId" class="form-label">Kategori</label>
+                            <select id="mobileCategoryId" name="categoryId" class="form-select">
+                                <option value="">-- Tüm Kategoriler --</option>
+                                @if (categories != null)
+                                {
+                                    @foreach (var category in categories)
+                                    {
+                                        <option value="@category.Id" selected="@(ViewData["CategoryId"]?.ToString() == category.Id.ToString())">@category.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Tarih Aralığı</label>
+                            <input type="date" id="mobileStartDate" name="startDate" class="form-control mb-2" value="@ViewData["StartDate"]" placeholder="Başlangıç" />
+                            <input type="date" id="mobileEndDate" name="endDate" class="form-control" value="@ViewData["EndDate"]" placeholder="Bitiş" />
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" data-bs-dismiss="offcanvas"><i class="fas fa-search me-2"></i>Ara</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas"><i class="fas fa-undo me-2"></i>Temizle</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Sonuç Bilgisi -->
+            <div class="alert alert-light border mb-4">
+                <span><i class="fas fa-info-circle me-2"></i>Toplam <strong>@Model.Count()</strong> blog bulundu</span>
+            </div>
+            
+            <!-- Blog Akışı -->
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <div class="card mb-4 shadow-sm blog-card">
+                        @if (!string.IsNullOrEmpty(item.ImagePath))
+                        {
+                            <img src="@item.ImagePath" class="card-img-top" alt="Blog görseli" style="height: 200px; object-fit: cover;">
+                        }
+                        <div class="card-body">
+                            <h3 class="card-title">@item.Title</h3>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="avatar me-2" style="width: 40px; height: 40px; border-radius: 50%; background-color: #6c757d; color: white; display: flex; align-items: center; justify-content: center;">
+                                    @item.UserName?.Substring(0, 1).ToUpper()
+                                </div>
+                                <div>
+                                    <span class="fw-bold">@item.UserName</span>
+                                    <div class="text small">
+                                        <i class="fas fa-calendar me-1"></i>@item.CreatedAt.ToShortDateString()
+                                        <i class="fas fa-tag ms-2 me-1"></i>@item.CategoryName
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="card-text">@(item.Content?.Length > 200 ? item.Content.Substring(0, 200) + "..." : item.Content)</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a asp-action="Details" asp-route-id="@item.Id" asp-route-returnUrl="@Url.Action("Index", "Blog")" class="btn btn-outline-primary">
+                                    <i class="fas fa-book-reader me-1"></i>Devamını Oku
+                                </a>
+                                <div class="text small">
+                                    <i class="far fa-comment me-1"></i>@(item.CommentCount) yorum
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-info text-center p-5">
+                    <i class="fas fa-exclamation-circle fa-3x mb-3"></i>
+                    <h4>Blog Bulunamadı</h4>
+                    <p>Aranan kriterlere göre blog bulunamadı. Filtrelerinizi değiştirerek tekrar deneyebilirsiniz.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Blog kartları için hover efekti
+            const blogCards = document.querySelectorAll('.blog-card');
+            blogCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+                    this.style.transition = 'all 0.3s ease';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 0.125rem 0.25rem rgba(0,0,0,0.075)';
+                    this.style.transition = 'all 0.3s ease';
+                });
+            });
+        });
+    </script>
+}

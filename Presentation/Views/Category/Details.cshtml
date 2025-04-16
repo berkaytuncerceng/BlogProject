@@ -1,0 +1,35 @@
+﻿@model Application.Dtos.CategoryDetailsDto
+
+@{
+    ViewData["Title"] = "Kategori Detayı";
+}
+
+<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-folder-open me-2"></i>Kategori Bilgisi
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title text-primary">
+                        <i class="fas fa-tag me-2"></i>@Model.Name
+                    </h5>
+                    <p class="card-text">
+                        <i class="fas fa-align-left me-2"></i>@Model.Description
+                    </p>
+                    <div class="mt-4">
+                        <a href="@Url.Action("Index", "Category")" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Geri Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,189 @@
+﻿@using System.Security.Claims
+@model Application.Dtos.BlogDetailsDto
+@{
+    ViewData["Title"] = Model.Title;
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    var returnUrl = Context.Request.Query["returnUrl"].ToString();
+    if (string.IsNullOrEmpty(returnUrl))
+    {
+        returnUrl = Url.Action("Index", "Blog");
+    }
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Geri Dön Düğmesi -->
+            <div class="mb-4">
+                <a href="@returnUrl" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                </a>
+            </div>
+
+            <!-- Blog Başlığı ve Yazar Bilgisi -->
+            <div class="blog-header mb-4">
+                <h1 class="display-4 fw-bold">@Model.Title</h1>
+                <div class="d-flex align-items-center my-4">
+                    <div class="avatar me-3" style="width: 50px; height: 50px; border-radius: 50%; background-color: #6c757d; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                        @Model.UserName?.Substring(0, 1).ToUpper()
+                    </div>
+                    <div>
+                        <div class="fw-bold fs-5">@Model.UserName</div>
+                        <div class="text">
+                            <i class="fas fa-calendar-alt me-1"></i> @Model.CreatedAt.ToString("dd MMMM yyyy")
+                            <span class="mx-2">•</span>
+                            <i class="fas fa-tag me-1"></i> @Model.CategoryName
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Görseli -->
+            @if (!string.IsNullOrEmpty(Model.ImagePath))
+            {
+                <div class="blog-image mb-4">
+                    <img src="@Model.ImagePath" class="img-fluid rounded shadow" alt="@Model.Title" style="width: 100%; max-height: 400px; object-fit: cover;">
+                </div>
+            }
+
+            <!-- Blog İçeriği -->
+            <div class="blog-content mb-5">
+                <div class="fs-5 lh-lg" style="white-space: pre-line;">
+                    @Model.Content
+                </div>
+            </div>
+
+            <!-- Düzenleme Düğmeleri -->
+            <div class="action-buttons mb-5">
+                @if (Model.UserId == currentUserId || User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                        <i class="fas fa-edit me-2"></i>Düzenle
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" onclick="return confirm('Bu blogu silmek istediğinizden emin misiniz?')" class="btn btn-danger ms-2">
+                        <i class="fas fa-trash me-2"></i>Sil
+                    </a>
+                }
+            </div>
+
+            <!-- Paylaş Düğmeleri -->
+            <div class="share-buttons mb-5">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3"><i class="fas fa-share-alt me-2"></i>Bu Yazıyı Paylaş</h5>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary" onclick="shareOnTwitter()">
+                                <i class="fab fa-twitter me-1"></i>Twitter
+                            </button>
+                            <button class="btn btn-outline-primary" onclick="shareOnFacebook()">
+                                <i class="fab fa-facebook me-1"></i>Facebook
+                            </button>
+                            <button class="btn btn-outline-success" onclick="shareOnWhatsapp()">
+                                <i class="fab fa-whatsapp me-1"></i>WhatsApp
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="copyLink()">
+                                <i class="fas fa-link me-1"></i>Linki Kopyala
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yorumlar Bölümü -->
+            <div class="comments-section">
+                <h3 class="mb-4"><i class="far fa-comments me-2"></i>Yorumlar (@(Model.Comments?.Count() ?? 0))</h3>
+
+                <!-- Yorum Form -->
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <form asp-controller="Comment" asp-action="Add" method="post">
+                                <input type="hidden" name="BlogId" value="@Model.Id" />
+                                <input type="hidden" name="AuthorName" value="@User.Identity.Name" />
+
+                                <div class="mb-3">
+                                    <label class="form-label">Yorumunuz</label>
+                                    <textarea name="Content" class="form-control" rows="3" placeholder="Düşüncelerinizi yazın..." required></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i>Yorum Gönder
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle me-2"></i>Yorum yapabilmek için <a href="/Identity/Account/Login" class="alert-link">giriş yapmalısınız</a>.
+                    </div>
+                }
+
+                <!-- Yorumlar Listesi -->
+                @if (Model.Comments != null && Model.Comments.Any())
+                {
+                    <div class="comments-list">
+                        @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedAt))
+                        {
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="comment-avatar me-3" style="width: 40px; height: 40px; border-radius: 50%; background-color: #e9ecef; color: #495057; display: flex; align-items: center; justify-content: center;">
+                                            @comment.AuthorName?.Substring(0, 1).ToUpper()
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between">
+                                                <h5 class="mb-1">@comment.AuthorName</h5>
+                                                <small class="text">@comment.CreatedAt.ToString("dd MMM yyyy HH:mm")</small>
+                                            </div>
+                                            <p class="mb-1">@comment.Content</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="far fa-comment-dots fa-3x text mb-3"></i>
+                        <p class="text">Henüz yorum yapılmamış. İlk yorumu siz yapın!</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function shareOnTwitter() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('@Model.Title');
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+        }
+
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+
+        function shareOnWhatsapp() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('@Model.Title');
+            window.open(`https://wa.me/?text=${text} ${url}`, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link kopyalandı!');
+            });
+        }
+    </script>
+}

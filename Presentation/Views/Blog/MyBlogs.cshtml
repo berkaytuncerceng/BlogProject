@@ -1,0 +1,161 @@
+﻿@model IEnumerable<Application.Dtos.BlogListDto>
+@{
+    ViewData["Title"] = "Bloglarım";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-pencil-alt me-2"></i>Bloglarım</h2>
+                <a asp-action="Create" class="btn btn-success">
+                    <i class="fas fa-plus me-2"></i>Yeni Blog Ekle
+                </a>
+            </div>
+
+            <!-- İstatistikler -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3">
+                    <div class="card border-primary bg-light h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title mb-0">Toplam Blog</h5>
+                                    <p class="text mb-0">Yayında</p>
+                                </div>
+                                <div class="display-4 fw-bold text-primary">@Model.Count()</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card border-success bg-light h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title mb-0">Toplam Yorum</h5>
+                                    <p class="text mb-0">Tüm Bloglarınızda</p>
+                                </div>
+                                <div class="display-4 fw-bold text-success">@Model.Sum(b => b.CommentCount)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card border-info bg-light h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title mb-0">Son Blog</h5>
+                                    <p class="text mb-0">Yayınlanma Tarihi</p>
+                                </div>
+                                <div class="h5 fw-bold text-info">
+                                    @(Model.Any() ? Model.OrderByDescending(b => b.CreatedAt).First().CreatedAt.ToString("dd MMM yyyy") : "-")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.Any())
+            {
+                <!-- Blog Kartları -->
+                <div class="row">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100 shadow-sm hover-card">
+                                @if (!string.IsNullOrEmpty(item.ImagePath))
+                                {
+                                    <div style="height: 180px; overflow: hidden;">
+                                        <img src="@item.ImagePath" class="card-img-top" alt="Blog görseli" style="object-fit: cover; height: 100%; width: 100%;">
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 100px;">
+                                        <i class="fas fa-image text fa-3x"></i>
+                                    </div>
+                                }
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="badge bg-info">@item.CategoryName</span>
+                                        <small class="text">@item.CreatedAt.ToShortDateString()</small>
+                                    </div>
+                                    <h5 class="card-title">@item.Title</h5>
+                                    <p class="card-text flex-grow-1 text-truncate">@(item.Content?.Length > 100 ? item.Content.Substring(0, 100) + "..." : item.Content)</p>
+                                    <div class="mt-auto">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <small class="text"><i class="far fa-comment me-1"></i>@(item.CommentCount) yorum</small>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li>
+                                                        <a class="dropdown-item" href="@Url.Action("Edit", new { id = item.Id })">
+                                                            <i class="fas fa-edit me-2"></i>Düzenle
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="@Url.Action("Delete", new { id = item.Id })"
+                                                           onclick="return confirm('Bu blogu silmek istediğinizden emin misiniz?')">
+                                                            <i class="fas fa-trash me-2"></i>Sil
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <a asp-action="Details" asp-route-id="@item.Id" asp-route-returnUrl="@Url.Action("MyBlogs", "Blog")"
+                                           class="btn btn-outline-primary w-100">
+                                            <i class="fas fa-eye me-2"></i>Detay
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <!-- Boş Durum -->
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-pencil-ruler fa-5x text"></i>
+                    </div>
+                    <h3>Henüz Blog Yazınız Bulunmuyor</h3>
+                    <p class="text">İlk blogunuzu oluşturmak için "Yeni Blog Ekle" düğmesine tıklayın.</p>
+                    <a asp-action="Create" class="btn btn-primary btn-lg mt-3">
+                        <i class="fas fa-plus me-2"></i>İlk Blogunuzu Oluşturun
+                    </a>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Kart hover efekti
+            const cards = document.querySelectorAll('.hover-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.transition = 'transform 0.3s ease';
+                    this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '';
+                });
+            });
+        });
+    </script>
+}

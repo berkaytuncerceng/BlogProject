@@ -1,0 +1,333 @@
+﻿/* Modern Blog Login Sayfası CSS */
+
+:root {
+    --primary-color: #3d5af1;
+    --primary-dark: #2a3eb1;
+    --secondary-color: #6c757d;
+    --text-dark: #343a40;
+    --text-light: #6c757d;
+    --bg-light: #f8f9fa;
+    --bg-dark: #343a40;
+    --white: #ffffff;
+    --shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text-dark);
+    background-color: var(--bg-light);
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* Sayfayı düzgün görüntülemek için ana yapı */
+.content-wrapper {
+    min-height: 100vh;
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+    box-sizing: border-box;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 1200px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin: 0 auto;
+    background-color: var(--white);
+}
+
+/* Sol bilgi paneli */
+.info-panel {
+    background: linear-gradient(135deg, #3a7bd5, #3d5af1);
+    color: var(--white);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.info-content {
+    padding: 3rem;
+}
+
+.site-logo {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--white);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.welcome-text {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.welcome-desc {
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+    opacity: 0.9;
+}
+
+.features-list {
+    margin-top: 2rem;
+}
+
+.feature-item {
+    display: flex;
+    margin-bottom: 1.5rem;
+    align-items: flex-start;
+}
+
+.feature-icon {
+    font-size: 1.8rem;
+    margin-right: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-text h3 {
+    font-size: 1.2rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.feature-text p {
+    margin: 0;
+    opacity: 0.8;
+    font-size: 0.95rem;
+}
+
+/* Sağ form paneli */
+.form-panel {
+    background-color: var(--white);
+    padding: 0;
+}
+
+.form-wrapper {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+    .auth-header h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-header p {
+        color: var(--text-light);
+        font-size: 1rem;
+        margin: 0;
+    }
+
+.validation-message {
+    background-color: rgba(220, 53, 69, 0.1);
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.custom-input {
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    height: calc(3.5rem + 2px);
+    padding: 1.5rem 1rem 0.5rem 1rem;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+    .custom-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(61, 90, 241, 0.25);
+    }
+
+.form-floating > label {
+    padding: 1rem 1rem 0;
+    color: var(--text-light);
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.form-check-input {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.25rem;
+}
+
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+.form-check-label {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.forgot-link {
+    color: var(--primary-color);
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+    .forgot-link:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+
+.login-btn {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 0.8rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+    .login-btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(61, 90, 241, 0.3);
+    }
+
+.social-login {
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.social-text {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+    .social-text::before,
+    .social-text::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 30%;
+        height: 1px;
+        background-color: #e1e1e1;
+    }
+
+    .social-text::before {
+        left: 0;
+    }
+
+    .social-text::after {
+        right: 0;
+    }
+
+.social-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.social-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    background-color: var(--white);
+}
+
+    .social-btn:hover {
+        background-color: var(--bg-light);
+        transform: translateY(-2px);
+    }
+
+.register-prompt {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.register-link {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+    .register-link:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+
+/* Responsive Ayarlamalar */
+@media (max-width: 991px) {
+    .login-container {
+        max-width: 90%;
+        margin: 1rem auto;
+    }
+
+    .form-wrapper {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .login-container {
+        max-width: 100%;
+        border-radius: 0;
+        margin: 0;
+        box-shadow: none;
+    }
+
+    .form-wrapper {
+        padding: 1.5rem;
+    }
+
+    .content-wrapper {
+        padding: 0;
+    }
+
+    .auth-header h2 {
+        font-size: 1.75rem;
+    }
+
+    .social-text::before,
+    .social-text::after {
+        width: 25%;
+    }
+}

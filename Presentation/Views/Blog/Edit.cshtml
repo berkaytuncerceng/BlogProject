@@ -1,0 +1,216 @@
+﻿@model Application.Dtos.BlogEditDto
+@{
+    ViewData["Title"] = "Blog Düzenle";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex align-items-center mb-4">
+                <a asp-action="Index" class="btn btn-outline-secondary me-3">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="mb-0">Blog Düzenle</h1>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="CreatedAt" />
+
+                        <div class="mb-4">
+                            <label asp-for="Title" class="form-label fw-bold">Blog Başlığı</label>
+                            <input asp-for="Title" class="form-control form-control-lg" placeholder="Etkileyici bir başlık girin..." />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="CategoryId" class="form-label fw-bold">Kategori</label>
+                            <select asp-for="CategoryId" class="form-select">
+                                @foreach (var category in ViewBag.Categories)
+                                {
+                                    <option value="@category.Id" selected="@(category.Id == Model.CategoryId)">
+                                        @category.Name
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Blog Görseli</label>
+                            @if (!string.IsNullOrEmpty(Model.ImagePath))
+                            {
+                                <div class="current-image mb-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="badge bg-info me-2">Mevcut Görsel</span>
+
+                                    </div>
+                                    <img src="@Model.ImagePath" class="img-fluid rounded border" style="max-height: 200px;" alt="Mevcut blog görseli" />
+                                </div>
+                            }
+                            <div class="input-group mb-3">
+                                <input type="file" class="form-control" name="ImageFile" id="imageFile" />
+                                <label class="input-group-text" for="imageFile">Yeni Görsel Seç</label>
+                            </div>
+                            <div id="imagePreview" class="mt-2 d-none">
+                                <span class="badge bg-success mb-2">Yeni Görsel Önizleme</span>
+                                <img src="" class="img-fluid rounded" style="max-height: 200px;" />
+                                <button type="button" class="btn btn-sm btn-outline-danger mt-2" id="removeImage">
+                                    <i class="fas fa-times me-1"></i>Görseli Kaldır
+                                </button>
+                            </div>
+                            <small class="text-muted">Önerilen görsel boyutu: 1200x630 piksel</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Content" class="form-label fw-bold">Blog İçeriği</label>
+                            <div class="editor-toolbar bg-light p-2 border rounded-top d-flex">
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="boldBtn">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="italicBtn">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="h2Btn">
+                                    H2
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="h3Btn">
+                                    H3
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="linkBtn">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="quoteBtn">
+                                    <i class="fas fa-quote-right"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="ulBtn">
+                                    <i class="fas fa-list-ul"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="olBtn">
+                                    <i class="fas fa-list-ol"></i>
+                                </button>
+                            </div>
+                            <textarea asp-for="Content" class="form-control" id="contentEditor" rows="10" placeholder="Blog içeriğinizi buraya yazın..."></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Güncelle
+                            </button>
+                            <div>
+                                <a asp-action="Index" class="btn btn-outline-secondary btn-lg me-2">İptal</a>
+                                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger btn-lg"
+                                   onclick="return confirm('Bu blogu silmek istediğinizden emin misiniz?')">
+                                    <i class="fas fa-trash me-1"></i>Sil
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Görsel Önizleme
+            const imageInput = document.getElementById('imageFile');
+            const imagePreview = document.getElementById('imagePreview');
+            const keepCurrentImage = document.getElementById('keepCurrentImage');
+
+            if (imageInput && imagePreview) {
+                const previewImg = imagePreview.querySelector('img');
+                const removeBtn = document.getElementById('removeImage');
+
+                imageInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewImg.src = e.target.result;
+                            imagePreview.classList.remove('d-none');
+
+                            // Yeni görsel seçildiğinde mevcut görseli koruma seçeneği varsa işareti kaldır
+                            if (keepCurrentImage) {
+                                keepCurrentImage.checked = false;
+                            }
+                        }
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
+
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', function() {
+                        imageInput.value = '';
+                        imagePreview.classList.add('d-none');
+
+                        // Mevcut görseli koruma seçeneği varsa tekrar işaretle
+                        if (keepCurrentImage) {
+                            keepCurrentImage.checked = true;
+                        }
+                    });
+                }
+            }
+
+            // Basit Metin Editörü İşlevleri
+            const editor = document.getElementById('contentEditor');
+            if (editor) {
+                function insertTextAtCursor(text) {
+                    const startPos = editor.selectionStart;
+                    const endPos = editor.selectionEnd;
+                    const selectedText = editor.value.substring(startPos, endPos);
+                    editor.value = editor.value.substring(0, startPos) + text.replace('{}', selectedText) + editor.value.substring(endPos);
+                    editor.focus();
+                }
+
+                document.getElementById('boldBtn')?.addEventListener('click', function() {
+                    insertTextAtCursor('**{}**');
+                });
+
+                document.getElementById('italicBtn')?.addEventListener('click', function() {
+                    insertTextAtCursor('*{}*');
+                });
+
+                document.getElementById('h2Btn')?.addEventListener('click', function() {
+                    insertTextAtCursor('\n## {}\n');
+                });
+
+                document.getElementById('h3Btn')?.addEventListener('click', function() {
+                    insertTextAtCursor('\n### {}\n');
+                });
+
+                document.getElementById('linkBtn')?.addEventListener('click', function() {
+                    const url = prompt('URL adresini girin:', 'https://');
+                    if (url) {
+                        const startPos = editor.selectionStart;
+                        const endPos = editor.selectionEnd;
+                        const selectedText = editor.value.substring(startPos, endPos) || 'Link başlığı';
+                        const link = `[${selectedText}](${url})`;
+                        editor.value = editor.value.substring(0, startPos) + link + editor.value.substring(endPos);
+                        editor.focus();
+                    }
+                });
+
+                document.getElementById('quoteBtn')?.addEventListener('click', function() {
+                    insertTextAtCursor('\n> {}\n');
+                });
+
+                document.getElementById('ulBtn')?.addEventListener('click', function() {
+                    insertTextAtCursor('\n- {}\n- \n- \n');
+                });
+
+                document.getElementById('olBtn')?.addEventListener('click', function() {
+                    insertTextAtCursor('\n1. {}\n2. \n3. \n');
+                });
+            }
+        });
+    </script>
+}

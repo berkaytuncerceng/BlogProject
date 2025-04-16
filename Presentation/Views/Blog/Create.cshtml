@@ -1,0 +1,373 @@
+﻿@model Application.Dtos.BlogCreateDto
+@{
+    ViewData["Title"] = "Yeni Blog Oluştur";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex align-items-center mb-4">
+                <a asp-action="Index" class="btn btn-outline-secondary me-3">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="mb-0">Yeni Blog Oluştur</h1>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label asp-for="Title" class="form-label fw-bold">Blog Başlığı</label>
+                            <input asp-for="Title" class="form-control form-control-lg" placeholder="Etkileyici bir başlık girin..." />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="CategoryId" class="form-label fw-bold">Kategori</label>
+                            <select asp-for="CategoryId" class="form-select">
+                                <option value="">-- Kategori Seçin --</option>
+                                @foreach (var category in ViewBag.Categories)
+                                {
+                                    <option value="@category.Id">@category.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Blog Görseli</label>
+                            <div class="input-group mb-3">
+                                <input type="file" class="form-control" name="ImageFile" id="imageFile" />
+                                <label class="input-group-text" for="imageFile">Seç</label>
+                            </div>
+                            <div id="imagePreview" class="mt-2 d-none">
+                                <img src="" class="img-fluid rounded" style="max-height: 200px;" />
+                                <button type="button" class="btn btn-sm btn-outline-danger mt-2" id="removeImage">
+                                    <i class="fas fa-times me-1"></i>Görseli Kaldır
+                                </button>
+                            </div>
+                            <small class="text">Önerilen görsel boyutu: 1200x630 piksel</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Content" class="form-label fw-bold">Blog İçeriği</label>
+                            <div class="editor-toolbar bg-light p-2 border rounded-top d-flex">
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="boldBtn">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="italicBtn">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="h2Btn">
+                                    H2
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="h3Btn">
+                                    H3
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="linkBtn">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="quoteBtn">
+                                    <i class="fas fa-quote-right"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="ulBtn">
+                                    <i class="fas fa-list-ul"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="olBtn">
+                                    <i class="fas fa-list-ol"></i>
+                                </button>
+                            </div>
+                            <textarea asp-for="Content" class="form-control" id="contentEditor" rows="10" placeholder="Blog içeriğinizi buraya yazın..."></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Yayınla
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">İptal</a>
+                        </div>
+                    </form>
+                    <!-- Fikir İste Butonu -->
+                    <button type="button" class="btn btn-outline-info mt-4" onclick="toggleAssistant()">
+                        <i class="fas fa-lightbulb me-2"></i> Fikir İste
+                    </button>
+
+                    <!-- Chatbot Panel -->
+                    <div id="chatbotPanel" style="display:none; border:1px solid #ccc; border-radius:10px; padding:15px; width:400px; background:#fff; position:fixed; right:20px; bottom:20px; z-index:9999; box-shadow: 0 0 20px rgba(0,0,0,0.2);">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0"><i class="fas fa-robot me-2"></i>AI Asistan</h5>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="toggleAssistant()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div id="chatContent" style="height:250px; overflow-y:auto; font-size:14px; padding:10px; background:#f8f9fa; margin-bottom:12px; border-radius:8px;">
+                            <div class="mb-3 text-center text-muted">
+                                <i class="fas fa-lightbulb me-1"></i> Blog yazmak için fikir mi arıyorsun? İçeriğinizi tamamlamak için bana sorun.
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-2">
+                            <input type="text" id="chatInput" class="form-control" placeholder="Örn: Blog içeriğine devam et..." />
+                            <button class="btn btn-primary" onclick="sendToGemini()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Blog içeriğini algılar ve bağlama uygun cevaplar verir</small>
+                            <button class="btn btn-sm btn-outline-danger" onclick="clearChat()">
+                                <i class="fas fa-trash-alt me-1"></i>Temizle
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <!-- jQuery fix: Eğer yüklü değilse -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Görsel Önizleme
+            const imageInput = document.getElementById('imageFile');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewImg = imagePreview.querySelector('img');
+            const removeBtn = document.getElementById('removeImage');
+
+            imageInput.addEventListener('change', function () {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImg.src = e.target.result;
+                        imagePreview.classList.remove('d-none');
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+
+            removeBtn.addEventListener('click', function () {
+                imageInput.value = '';
+                imagePreview.classList.add('d-none');
+            });
+
+            // Metin Editörü
+            const editor = document.getElementById('contentEditor');
+
+            function insertTextAtCursor(text) {
+                const startPos = editor.selectionStart;
+                const endPos = editor.selectionEnd;
+                const selectedText = editor.value.substring(startPos, endPos);
+                editor.value = editor.value.substring(0, startPos) + text.replace('{}', selectedText) + editor.value.substring(endPos);
+                editor.focus();
+            }
+
+            document.getElementById('boldBtn').addEventListener('click', () => insertTextAtCursor('**{}**'));
+            document.getElementById('italicBtn').addEventListener('click', () => insertTextAtCursor('*{}*'));
+            document.getElementById('h2Btn').addEventListener('click', () => insertTextAtCursor('\n## {}\n'));
+            document.getElementById('h3Btn').addEventListener('click', () => insertTextAtCursor('\n### {}\n'));
+            document.getElementById('linkBtn').addEventListener('click', function () {
+                const url = prompt('URL adresini girin:', 'https://');
+                if (url) {
+                    const startPos = editor.selectionStart;
+                    const endPos = editor.selectionEnd;
+                    const selectedText = editor.value.substring(startPos, endPos) || 'Link başlığı';
+                    const link = `[${selectedText}](${url})`;
+                    editor.value = editor.value.substring(0, startPos) + link + editor.value.substring(endPos);
+                    editor.focus();
+                }
+            });
+            document.getElementById('quoteBtn').addEventListener('click', () => insertTextAtCursor('\n> {}\n'));
+            document.getElementById('ulBtn').addEventListener('click', () => insertTextAtCursor('\n- {}\n- \n- \n'));
+            document.getElementById('olBtn').addEventListener('click', () => insertTextAtCursor('\n1. {}\n2. \n3. \n'));
+        });
+
+        // AI Asistan Fonksiyonları
+        function toggleAssistant() {
+            const panel = document.getElementById("chatbotPanel");
+            panel.style.display = panel.style.display === "none" ? "block" : "none";
+
+            // Panel açıldığında input'a odaklan
+            if (panel.style.display === "block") {
+                document.getElementById("chatInput").focus();
+            }
+        }
+
+        function clearChat() {
+            if (confirm("Sohbet geçmişini temizlemek istediğinize emin misiniz?")) {
+                document.getElementById("chatContent").innerHTML = `
+                <div class="mb-3 text-center text-muted">
+                    <i class="fas fa-lightbulb me-1"></i> Blog yazmak için fikir mi arıyorsun? İçeriğinizi tamamlamak için bana sorun.
+                </div>
+            `;
+
+                // Sunucu tarafında da geçmişi temizle
+                fetch('/Gemini/ClearHistory', { method: 'POST' });
+            }
+        }
+
+        // Enter tuşu ile gönder
+        document.getElementById("chatInput").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendToGemini();
+            }
+        });
+
+        async function sendToGemini() {
+            const input = document.getElementById("chatInput");
+            const content = document.getElementById("chatContent");
+            const editor = document.getElementById("contentEditor");
+
+            const userMessage = input.value.trim();
+            if (!userMessage) return;
+
+            content.innerHTML += `
+            <div class="mb-2">
+                <div class="d-flex justify-content-end">
+                    <div style="background-color: #dcf8c6; padding: 8px 12px; border-radius: 10px; max-width: 80%;">
+                        <span>${userMessage}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+            const loadingId = "loading-" + Date.now();
+            content.innerHTML += `
+            <div class="mb-2" id="${loadingId}">
+                <div class="d-flex">
+                    <div style="background-color: #f1f1f1; padding: 8px 12px; border-radius: 10px; max-width: 80%;">
+                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                        <span>Yanıt hazırlanıyor...</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+            content.scrollTop = content.scrollHeight;
+
+            input.value = "";
+            input.focus();
+
+            try {
+                const response = await fetch('/Gemini/Suggest', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: userMessage,
+                        currentContent: editor.value // Mevcut blog içeriğini de gönder
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const suggestion = await response.text();
+
+                const suggestionBox = document.createElement("div");
+                suggestionBox.className = "mb-3";
+
+                suggestionBox.innerHTML = `
+  <div class="d-flex">
+    <div class="bg-light p-3 rounded shadow-sm w-100" style="max-width: 80%;">
+      <div class="mb-2" style="white-space: pre-line;"></div>
+      <div class="d-flex justify-content-end gap-2">
+        <button class="btn btn-sm btn-success">
+          <i class="fas fa-plus me-1"></i> Ekle
+        </button>
+        <button class="btn btn-sm btn-outline-secondary">
+          <i class="fas fa-copy me-1"></i> Kopyala
+        </button>
+      </div>
+    </div>
+  </div>
+`;
+
+                const contentDiv = suggestionBox.querySelector(".mb-2");
+                contentDiv.innerHTML = formatMessage(suggestion);
+
+                const addBtn = suggestionBox.querySelector(".btn-success");
+                addBtn.addEventListener("click", () => addToEditor(encodeURIComponent(suggestion)));
+
+                const copyBtn = suggestionBox.querySelector(".btn-outline-secondary");
+                copyBtn.addEventListener("click", () => copyToClipboard(encodeURIComponent(suggestion)));
+
+                document.getElementById("chatContent").appendChild(suggestionBox);
+
+                content.scrollTop = content.scrollHeight;
+            } catch (err) {
+                document.getElementById(loadingId).remove();
+
+                content.innerHTML += `
+                <div class="mb-2">
+                    <div class="d-flex">
+                        <div style="background-color: #ffdddd; padding: 8px 12px; border-radius: 10px; max-width: 80%;">
+                            <i class="fas fa-exclamation-circle text-danger me-1"></i>
+                            <span>Hata oluştu: ${err.message}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+                content.scrollTop = content.scrollHeight;
+            }
+        }
+
+        function formatMessage(message) {
+            return message.replace(/\n/g, '<br>');
+        }
+
+        function addToEditor(encodedText) {
+            const text = decodeURIComponent(encodedText);
+            const editor = document.getElementById("contentEditor");
+
+            if (editor.value.trim().length > 0) {
+                editor.value += "\n\n" + text;
+            } else {
+                editor.value = text;
+            }
+
+            const toast = document.createElement("div");
+            toast.className = "alert alert-success position-fixed bottom-0 end-0 m-3";
+            toast.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            İçerik başarıyla eklendi
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert"></button>
+        `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function copyToClipboard(encodedText) {
+            const text = decodeURIComponent(encodedText);
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.createElement("div");
+                toast.className = "alert alert-info position-fixed bottom-0 end-0 m-3";
+                toast.innerHTML = `
+                <i class="fas fa-copy me-2"></i>
+                İçerik panoya kopyalandı
+                <button type="button" class="btn-close float-end" data-bs-dismiss="alert"></button>
+            `;
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            });
+        }
+    </script>
+}
