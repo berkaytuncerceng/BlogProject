@@ -78,6 +78,9 @@ Google Gemini API ile yazı önerileri alarak içerik üretimini destekleyen ak�
 
 ![image](https://github.com/user-attachments/assets/5c31c08b-5522-4fe0-b582-72861422cd78)
 
+📋 Loglama & Hata Yönetimi (NLog)
+Uygulama genelinde hata ayıklama, bilgi logları ve servis takipleri için güçlü bir loglama altyapısı olan NLog entegre edilmiştir.
+
 
 
 
