@@ -1,0 +1,12 @@
+2025-04-16 16:56:58.9120 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2025-04-16 16:56:58.9207 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.4.0.3182. Product version: 5.4.0+4d45d445601312040107cbe2ac00e56c4bf4a60b. GlobalAssemblyCache: False
+2025-04-16 16:56:58.9322 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\berkay.tuncer\source\repos\BlogProject\Presentation\nlog.config
+2025-04-16 16:56:58.9322 Info Configuration initialized.
+2025-04-16 16:57:29.9881 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2025-04-16 16:57:29.9980 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.4.0.3182. Product version: 5.4.0+4d45d445601312040107cbe2ac00e56c4bf4a60b. GlobalAssemblyCache: False
+2025-04-16 16:57:30.0082 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\berkay.tuncer\source\repos\BlogProject\Presentation\nlog.config
+2025-04-16 16:57:30.0082 Info Configuration initialized.
+2025-04-16 17:02:15.3683 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2025-04-16 17:02:15.3806 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.4.0.3182. Product version: 5.4.0+4d45d445601312040107cbe2ac00e56c4bf4a60b. GlobalAssemblyCache: False
+2025-04-16 17:02:15.3934 Info Validating config: TargetNames=logfile, ConfigItems=12, FilePath=C:\Users\berkay.tuncer\source\repos\BlogProject\Presentation\nlog.config
+2025-04-16 17:02:15.4096 Info Configuration initialized.
